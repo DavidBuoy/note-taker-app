@@ -21,8 +21,24 @@ app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, 'public/notes.
 
 app.get('/api/notes', (req, res) => res.sendFile(path.join(__dirname, 'db/db.json')));
 
+// This writes the info to the db.json file
+app.post("/api/notes", (req, res) => {
+    fs.readFile(path.join(__dirname, "db/db.json"), "utf8", (error, response) => {
+        if (error) throw error;
+        const notes = JSON.parse(response);
+        const body = req.body;
+        const writeNewNote = {
+            title: body.title,
+            text: body.text
+        };
 
-
+        notes.push(writeNewNote);
+        res.json(writeNewNote);
+        fs.writeFile(path.join(__dirname, "db/db.json"), JSON.stringify(notes), (error) => {
+            if (error) throw error;
+        });
+    });
+});
 
 
 
